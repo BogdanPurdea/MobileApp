@@ -13,14 +13,11 @@ public class Transaction implements Parcelable{
     public String category;
     public String type;
     public Integer value;
-    static Integer currentId = 1;
 
     public Transaction(String category, String type,Integer value){
-        this.id = currentId;
         this.category = category;
         this.type = type;
         this.value = value;
-        currentId += 1;
     }
     public Integer getId() {
         return id;

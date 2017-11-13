@@ -16,20 +16,23 @@ import models.Transaction;
 public class DisplayListOfItems extends AppCompatActivity {
 
     ArrayList<Transaction> listItems = new ArrayList<Transaction>();
+    int index=0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_list_of_items);
         ListView lv = (ListView) findViewById(R.id.listView);
-        listItems.add(new Transaction("Wages and Salaries", "Income", 5000));
-        listItems.add(new Transaction("Scholarship", "Expense", 1000));
-        listItems.add(new Transaction("Food", "Expense", 100));
+        Transaction t1 = new Transaction("Wages and Salaries", "Income", 5000);
+        Transaction t2 = new Transaction("Scholarship", "Expense", 1000);
+        Transaction t3 = new Transaction("Food", "Expense", 100);
+        addTransaction(t1);
+        addTransaction(t2);
+        addTransaction(t3);
         /*Intent i = getIntent();
-        try {
+        if (i.getParcelableExtra("newTransaction")!=null)
+        {
             final Transaction transaction = (Transaction) i.getParcelableExtra("newTransaction");
             listItems.add(transaction);
-        }finally{
-
         }*/
 
         ArrayAdapter<Transaction> adapter = new ArrayAdapter<Transaction>(this, android.R.layout.simple_list_item_1, listItems);
@@ -45,6 +48,11 @@ public class DisplayListOfItems extends AppCompatActivity {
 
     }
 
+    public void addTransaction(Transaction tr){
+        index++;
+        tr.setId(index);
+        listItems.add(tr);
+    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
