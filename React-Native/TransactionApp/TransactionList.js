@@ -9,11 +9,14 @@ t3 = new Transaction(3,'Food','Expense',100);
 const transactions = [t1,t2,t3];
 const extractKey = ({id}) => id;
 
-export default class TransactionList extends React.Component {
+export class TransactionList extends React.Component {
     static navigationOptions = {
-        title: 'TransactionList',
-    }
+        title: 'List',
+    };
 
+    onTransaction=(transaction)=>{
+        this.props.navigation.navigate('Item', 'Transaction '+transaction.id, transaction);
+    };
     render() {
         return (
             <View style = {styles.container}>
@@ -22,6 +25,7 @@ export default class TransactionList extends React.Component {
                     data={transactions}
                     renderItem={({item}) => item.render()}
                     keyExtractor={extractKey}
+                    onPress={({item})=>this.onTransaction(item)}
                 />
             </View>
         );

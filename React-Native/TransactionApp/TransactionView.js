@@ -1,16 +1,16 @@
 import React from 'react';
 import {View, Text, TextInput, StyleSheet} from 'react-native';
+import Transaction from "./Transaction";
 
 export class TransactionView extends React.Component{
+    static navigationOptions =  ({navigation}) => ({
+        title: navigation.state.params.name,
+    });
+    transaction: Transaction;
 
-    category: string;
-    type: string;
-    value: number;
-    constructor(category, type, value) {
+    constructor(tr) {
         super();
-        this.category = category;
-        this.type = type;
-        this.value = value;
+        this.transaction = tr;
     }
     render() {
         return (
@@ -19,19 +19,19 @@ export class TransactionView extends React.Component{
                 <TextInput
                     style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                     onChangeText={(text) => this.setState({text})}
-                    value={this.category}
+                    value={this.transaction.category}
                 />
                 <Text>Type</Text>
                 <TextInput
                     style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                     onChangeText={(text) => this.setState({text})}
-                    value={this.type}
+                    value={this.transaction.type}
                 />
                 <Text>Value</Text>
                 <TextInput
                     style={{height: 40, borderColor: 'gray', borderWidth: 1}}
                     onChangeText={(text) => this.setState({text})}
-                    value={this.value}
+                    value={this.transaction.value}
                 />
             </View>
         );

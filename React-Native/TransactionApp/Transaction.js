@@ -7,7 +7,6 @@ export default class Transaction extends React.Component{
     category: string;
     type: string;
     value: number;
-    pressStatus: boolean;
 
     constructor(id, category, type, value) {
         super();
@@ -15,24 +14,16 @@ export default class Transaction extends React.Component{
         this.category = category;
         this.type = type;
         this.value = value;
-        this.pressStatus= false;
-    }
-
-    _onPressButton(){
-        this.pressStatus=true;
-
     }
 
     render(){
         return (
-            <TouchableHighlight onPress={this._onPressButton}>
                 <View style = {styles.tr}>
                     <Text> Transaction {this.id}</Text>
                     <Text> Category: {this.category}</Text>
                     <Text> Type:  {this.type}</Text>
                     <Text> Value: {this.value}</Text>
                 </View>
-            </TouchableHighlight>
         );
     }
 }
