@@ -1,37 +1,87 @@
 import React from 'react';
-import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Button } from 'react-native';
 import Transaction from './Transaction.js'
 
-t1 = new Transaction(1,'Salary','Income',5000);
-t2 = new Transaction(2,'School','Expense',1000);
-t3 = new Transaction(3,'Food','Expense',100);
+const Realm = require('realm');
 
-const transactions = [t1,t2,t3];
-const extractKey = ({id}) => id;
+const TransactionSchema = {
+    name: 'Transaction',
+    primaryKey: 'id',
+    properties: {
+        id:  'int',
+        category: 'string',
+        type: 'string',
+        value: 'int'
+    }
+};
+
+let realm = new Realm({schema: [TransactionSchema]});
+
+const transactions = realm.objects('Transaction');
 
 export class TransactionList extends React.Component {
     static navigationOptions = {
         title: 'List',
     };
-
-    onTransaction=(transaction)=>{
-        this.props.navigation.navigate('Item', 'Transaction '+transaction.id, transaction);
+    state = {selected: (new Map(): Map<string, boolean>)};
+    keyExtractor = (item) => item.id;
+    onPressItem = (id: string) => {
+        this.setState((state) => {
+            const selected = new Map(state.selected);
+            selected.set(id, !selected.get(id));
+            this.props.navigation.navigate('Item', {transactionId: id, realm: realm});
+            return {selected};
+        });
     };
+    renderItem = ({item}) => (
+        <Transaction
+            id={item.id}
+            onPressItem={this.onPressItem}
+            selected={!!this.state.selected.get(item.id)}
+            category={item.category}
+            type={item.type}
+            value={item.value}
+        />
+    );
+    goToAdd(){
+        this.props.navigation.navigate('Add', {realm: realm});
+    }
+    goToDelete(){
+        this.props.navigation.navigate('Delete', {realm: realm});
+    }
+    goToChart(){
+        this.props.navigation.navigate('Chart');
+    }
     render() {
         return (
             <View style = {styles.container}>
-                <Text>Transactions</Text>
+                <Button
+                    onPress={() => this.goToChart()}
+                    title="Display chart"
+                    color="#841584"
+                />
+                <Text>  Transactions</Text>
                 <FlatList
                     data={transactions}
-                    renderItem={({item}) => item.render()}
-                    keyExtractor={extractKey}
-                    onPress={({item})=>this.onTransaction(item)}
+                    extraData={this.state}
+                    renderItem={this.renderItem}
+                    keyExtractor={this.keyExtractor}
+                />
+                <Button
+                    onPress={() => this.goToAdd()}
+                    title="Add"
+                    color="#841584"
+                />
+                <Text>  </Text>
+                <Button
+                    onPress={() => this.goToDelete()}
+                    title="Delete"
+                    color="#841584"
                 />
             </View>
         );
     }
 }
-
 const styles = StyleSheet.create({
     container: {
         marginTop: 30,

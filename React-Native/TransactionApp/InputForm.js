@@ -1,14 +1,9 @@
 import React from 'react';
 import {View, Text, TextInput, StyleSheet, Button, Linking} from 'react-native';
-import Transaction from "./Transaction";
 export class InputForm extends React.Component{
     static navigationOptions =  ({navigation}) => ({
         title: 'Home',
     });
-
-    constructor(props) {
-        super(props);
-    }
     static submit(){
         Linking.openURL('mailto://bogdanpurdea14@gmail.com&subject=Submit&body=HI');
     }

@@ -1,34 +1,38 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableHighlight} from 'react-native';
-//import {Navigator} from 'react-native-deprecated-custom-components'
-//import {TransactionView} from './TransactionView.js'
-export default class Transaction extends React.Component{
-    id: number;
-    category: string;
-    type: string;
-    value: number;
 
-    constructor(id, category, type, value) {
-        super();
-        this.id = id;
-        this.category = category;
-        this.type = type;
-        this.value = value;
-    }
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+export default class Transaction extends React.Component{
+
+    onPress = () => {
+        this.props.onPressItem(this.props.id);
+    };
 
     render(){
         return (
+            <TouchableOpacity onPress={this.onPress}>
                 <View style = {styles.tr}>
-                    <Text> Transaction {this.id}</Text>
-                    <Text> Category: {this.category}</Text>
-                    <Text> Type:  {this.type}</Text>
-                    <Text> Value: {this.value}</Text>
+                    <Text> Transaction {this.props.id}</Text>
+                    <Text> Category: {this.props.category}</Text>
+                    <Text> Type:  {this.props.type}</Text>
+                    <Text> Value: {this.props.value}</Text>
                 </View>
+            </TouchableOpacity>
         );
     }
 }
 
 
+
+export const TransactionSchema = {
+    name: 'Transaction',
+    primaryKey: 'id',
+    properties: {
+        id:  'int',
+        category: 'string',
+        type: 'string',
+        value: 'int'
+    }
+};
 
 const styles = StyleSheet.create({
     tr: {
