@@ -1,126 +1,124 @@
 package com.example.android.transactionapp;
 
 import android.app.Activity;
-import android.content.Context;
+import android.arch.persistence.room.Room;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.AppDatabase;
 import models.Transaction;
 
 public class DisplayListOfItems extends AppCompatActivity {
-    private static final String PREFS_TAG = "SharedPrefs";
-    private static final String TRANSACTION_TAG = "Transaction";
-    ArrayList<Transaction> listItems = new ArrayList<Transaction>();
-    int index=0;
-    SharedPreferences mPrefs = getPreferences(MODE_PRIVATE);
+    List<Transaction> listItems = new ArrayList<>();
+    AppDatabase db = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_display_list_of_items);
-        ListView lv = (ListView) findViewById(R.id.listView);
-        Transaction t1 = new Transaction("Wages and Salaries", "Income", 5000);
-        Transaction t2 = new Transaction("Scholarship", "Expense", 1000);
-        Transaction t3 = new Transaction("Food", "Expense", 100);
-        addTransaction(t1);
-        addTransaction(t2);
-        addTransaction(t3);
-        /*Intent i = getIntent();
-        if (i.getParcelableExtra("newTransaction")!=null)
-        {
-            final Transaction transaction = (Transaction) i.getParcelableExtra("newTransaction");
-            listItems.add(transaction);
-        }*/
-        ArrayAdapter<Transaction> adapter = new ArrayAdapter<Transaction>(this, android.R.layout.simple_list_item_1, listItems);
+        db = Room.databaseBuilder(getApplicationContext(),
+                AppDatabase.class, "database").allowMainThreadQueries().build();
+
+        listItems = db.transactionDao().getAll();
+        ListView lv = findViewById(R.id.listView);
+        ArrayAdapter<Transaction> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
         lv.setAdapter(adapter);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent i = new Intent(DisplayListOfItems.this, EditItem.class);
-                i.putExtra("item", (Transaction) parent.getItemAtPosition(position));
+                Transaction tr = (Transaction) parent.getItemAtPosition(position);
+                i.putExtra("id", tr.id.toString());
+                i.putExtra("category", tr.category);
+                i.putExtra("type", tr.type);
+                i.putExtra("value", tr.value.toString());
                 startActivityForResult(i, 1);
             }
         });
-
+        final Button addButton = findViewById(R.id.addButton);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(DisplayListOfItems.this, AddItem.class);
+                startActivityForResult(i, 2);
+            }
+        });
+        final Button removeButton = findViewById(R.id.removeButton);
+        removeButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(DisplayListOfItems.this, RemoveItem.class);
+                startActivityForResult(i, 3);
+            }
+        });
     }
-
-    public void addTransaction(Transaction tr){
+    public void addTransaction(String category, String type, Integer value){
+        Integer index = db.transactionDao().getLastUsedId();
+        Transaction tr = new Transaction();
         index++;
         tr.setId(index);
-        listItems.add(tr);
-        //addInJSONArray(tr);
+        tr.setCategory(category);
+        tr.setType(type);
+        tr.setValue(value);
+        db.transactionDao().insertOne(tr);
+    }
+    public void removeTransaction(Integer id){
+        Transaction tr = db.transactionDao().findById(id);
+        db.transactionDao().delete(tr);
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         {
-            switch(requestCode) {
+            switch (requestCode) {
                 case (1): {
                     if (resultCode == Activity.RESULT_OK) {
-                        Transaction tr = data.getParcelableExtra("result");
-                        ListView lv = (ListView) findViewById(R.id.listView);
-                        for (int i = 0; i < listItems.size(); i++) {
-                            if (listItems.get(i).getId() == tr.getId())
-                                listItems.set(i, tr);
-                        }
-                        ArrayAdapter<Transaction> adapter = new ArrayAdapter<Transaction>(this, android.R.layout.simple_list_item_1, listItems);
+
+                        Integer id = Integer.parseInt(data.getStringExtra("resultId"));
+                        String category = data.getStringExtra("resultCategory");
+                        String type = data.getStringExtra("resultType");
+                        Integer value = Integer.parseInt(data.getStringExtra("resultValue"));
+                        ListView lv = findViewById(R.id.listView);
+                        db.transactionDao().updateTransaction(id, category, type, value);
+                        listItems = db.transactionDao().getAll();
+                        ArrayAdapter<Transaction> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
+                        lv.setAdapter(adapter);
+                    }
+                    break;
+
+                }
+                case (2): {
+                    if (resultCode == Activity.RESULT_OK) {
+                        String category = data.getStringExtra("resultCategory");
+                        String type = data.getStringExtra("resultType");
+                        Integer value = Integer.parseInt(data.getStringExtra("resultValue"));
+                        ListView lv = findViewById(R.id.listView);
+                        addTransaction(category, type, value);
+                        listItems = db.transactionDao().getAll();
+                        ArrayAdapter<Transaction> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
                         lv.setAdapter(adapter);
                     }
                     break;
                 }
+                case (3): {
+                    if (resultCode == Activity.RESULT_OK) {
+                        int id = Integer.valueOf(data.getStringExtra("resultId"));
+                        ListView lv = findViewById(R.id.listView);
+                        removeTransaction(id);
+                        listItems = db.transactionDao().getAll();
+                        ArrayAdapter<Transaction> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
+                        lv.setAdapter(adapter);
+                    }
+                }
+                break;
             }
         }
-    }
-    private ArrayList<Transaction> getDataFromSharedPreferences(){
-        Gson gson = new Gson();
-        ArrayList<Transaction> transactionFromShared = new ArrayList<>();
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
-        String jsonPreferences = sharedPref.getString(TRANSACTION_TAG, "");
-
-        Type type = new TypeToken<List<Transaction>>() {}.getType();
-        transactionFromShared = gson.fromJson(jsonPreferences, type);
-
-        return transactionFromShared;
-    }
-
-    private void addInJSONArray(Transaction transactionToAdd){
-
-        Gson gson = new Gson();
-        SharedPreferences sharedPref = getApplicationContext().getSharedPreferences(PREFS_TAG, Context.MODE_PRIVATE);
-
-        String jsonSaved = sharedPref.getString(TRANSACTION_TAG, "");
-        String jsonNewTransactionToAdd = gson.toJson(transactionToAdd);
-
-        JSONArray jsonArrayTransaction= new JSONArray();
-
-        try {
-            if(jsonSaved.length()!=0){
-                jsonArrayTransaction = new JSONArray(jsonSaved);
-            }
-            jsonArrayTransaction.put(new JSONObject(jsonNewTransactionToAdd));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        //SAVE NEW ARRAY
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(TRANSACTION_TAG, jsonArrayTransaction.toString());
-        editor.apply();
     }
 }

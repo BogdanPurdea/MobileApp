@@ -9,8 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import models.Transaction;
-
 public class EditItem extends AppCompatActivity {
 
     @Override
@@ -18,23 +16,27 @@ public class EditItem extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_item);
         Intent i = getIntent();
-        final Transaction transaction = (Transaction)i.getParcelableExtra("item");
-        TextView transactionTextView = (TextView)findViewById(R.id.transactionTextView);
-        transactionTextView.setText("Transaction "+transaction.getIdString());
-        final EditText categoryEditText = (EditText)findViewById(R.id.categoryEditText);
-        categoryEditText.setText(transaction.getCategoryString());
-        final EditText typeEditText = (EditText)findViewById(R.id.typeEditText);
-        typeEditText.setText(transaction.getTypeString());
-        final EditText valueEditText = (EditText)findViewById(R.id.valueEditText);
-        valueEditText.setText(transaction.getValueString());
-        Button showButton = (Button) findViewById(R.id.submitButton);
+        final String id = i.getStringExtra("id");
+        String category = i.getStringExtra("category");
+        String type = i.getStringExtra("type");
+        String value = i.getStringExtra("value");
+
+        TextView transactionTextView = findViewById(R.id.transactionTextView);
+        transactionTextView.setText("Transaction "+ id);
+        final EditText categoryEditText = findViewById(R.id.categoryEditText);
+        categoryEditText.setText(category);
+        final EditText typeEditText = findViewById(R.id.typeEditText);
+        typeEditText.setText(type);
+        final EditText valueEditText = findViewById(R.id.valueEditText);
+        valueEditText.setText(value);
+        Button showButton = findViewById(R.id.submitButton);
         showButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                transaction.setCategory(categoryEditText.getText().toString());
-                transaction.setType(typeEditText.getText().toString());
-                transaction.setValue(Integer.parseInt(valueEditText.getText().toString()));
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra("result", transaction);
+                resultIntent.putExtra("resultId", id);
+                resultIntent.putExtra("resultCategory", categoryEditText.getText().toString());
+                resultIntent.putExtra("resultType", typeEditText.getText().toString());
+                resultIntent.putExtra("resultValue", valueEditText.getText().toString());
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }

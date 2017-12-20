@@ -1,24 +1,23 @@
 package models;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 
 /**
- * Created by Bogdan on 10/29/2017.
+ * Created by Bogdan on 12/20/2017.
  */
-
-public class Transaction implements Parcelable{
-
+@Entity(tableName = "transactionTable")
+public class Transaction {
+    @PrimaryKey
     public Integer id;
+    @ColumnInfo(name = "category")
     public String category;
+    @ColumnInfo(name = "type")
     public String type;
+    @ColumnInfo(name = "value")
     public Integer value;
 
-    public Transaction(String category, String type,Integer value){
-        this.category = category;
-        this.type = type;
-        this.value = value;
-    }
     public Integer getId() {
         return id;
     }
@@ -54,50 +53,5 @@ public class Transaction implements Parcelable{
     @Override
     public String toString(){
         return "Transaction "+getId()+"\nCategory: "+getCategory()+"\nType: "+getType()+"\nValue: "+getValue();
-    }
-    public String getIdString()
-    {
-        return ""+getId();
-    }
-    public String getCategoryString()
-    {
-        return ""+getCategory();
-    }
-    public String getTypeString()
-    {
-        return ""+getType();
-    }
-    public String getValueString()
-    {
-        return ""+getValue();
-    }
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-    @Override
-    public void writeToParcel(Parcel out, int flags) {
-        out.writeInt(id);
-        out.writeString(category);
-        out.writeString(type);
-        out.writeInt(value);
-    }
-
-    public static final Parcelable.Creator<Transaction> CREATOR = new Parcelable.Creator<Transaction>() {
-        public Transaction createFromParcel(Parcel in) {
-            return new Transaction(in);
-        }
-
-        public Transaction[] newArray(int size) {
-            return new Transaction[size];
-        }
-    };
-
-    // example constructor that takes a Parcel and gives you an object populated with it's values
-    private Transaction(Parcel in) {
-        id = in.readInt();
-        category = in.readString();
-        type = in.readString();
-        value = in.readInt();
     }
 }

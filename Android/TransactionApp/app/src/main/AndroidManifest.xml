@@ -29,6 +29,21 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DisplayListOfItems" />
-        </activity>    </application>
+        </activity>
+        <activity
+            android:name=".AddItem"
+            android:parentActivityName=".DisplayListOfItems">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DisplayListOfItems" />
+        </activity>
+        <activity
+            android:name=".RemoveItem"
+            android:parentActivityName=".DisplayListOfItems">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DisplayListOfItems" />
+        </activity>
+    </application>
 
 </manifest>
