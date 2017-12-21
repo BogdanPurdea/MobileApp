@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(Intent.createChooser(emailIntent,"Send email..."));
             }
         });
-        final Button showButton = (Button) findViewById(R.id.showButton);
+        final Button showButton = findViewById(R.id.showButton);
         showButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, DisplayListOfItems.class);
