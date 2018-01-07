@@ -3,6 +3,8 @@
     package="com.example.android.transactionapp">
 
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -17,12 +19,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".DisplayListOfItems"
+        <activity android:name=".LoginActivity"
             android:parentActivityName=".MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MainActivity" />
+        </activity>
+        <activity android:name=".SignupActivity"
+            android:parentActivityName=".LoginActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".LoginActivity" />
+        </activity>
+        <activity
+            android:name=".DisplayListOfItems"
+            android:parentActivityName=".LoginActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".LoginActivity" />
+        </activity>
+        <activity
+            android:name=".DisplayCategories"
+            android:parentActivityName=".LoginActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".LoginActivity" />
         </activity>
         <activity
             android:name=".EditItem"
@@ -39,7 +60,21 @@
                 android:value=".DisplayListOfItems" />
         </activity>
         <activity
+            android:name=".AddCategory"
+            android:parentActivityName=".DisplayCategories">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DisplayCategories" />
+        </activity>
+        <activity
             android:name=".RemoveItem"
+            android:parentActivityName=".DisplayListOfItems">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".DisplayListOfItems" />
+        </activity>
+        <activity
+            android:name=".SubmitDetails"
             android:parentActivityName=".DisplayListOfItems">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

@@ -1,7 +1,6 @@
 package com.example.android.transactionapp;
 
 import android.app.Activity;
-import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,20 +14,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import models.AppDatabase;
+import models.Category;
+import models.Repo;
 import models.Transaction;
 
 public class DisplayListOfItems extends AppCompatActivity {
     List<Transaction> listItems = new ArrayList<>();
-    AppDatabase db = null;
+    Repo repo = new Repo(this);
+    AppDatabase db = repo.getDb();
+    Integer userId = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_display_list_of_items);
-        db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "database").allowMainThreadQueries().build();
 
-        listItems = db.transactionDao().getAll();
+        Intent i = getIntent();
+        userId = i.getIntExtra("userId",0);
+
+        listItems = db.transactionDao().getAllForUser(userId);
         ListView lv = findViewById(R.id.listView);
         ArrayAdapter<Transaction> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
         lv.setAdapter(adapter);
@@ -38,7 +42,8 @@ public class DisplayListOfItems extends AppCompatActivity {
                 Intent i = new Intent(DisplayListOfItems.this, EditItem.class);
                 Transaction tr = (Transaction) parent.getItemAtPosition(position);
                 i.putExtra("id", tr.id.toString());
-                i.putExtra("category", tr.category);
+                String categoryName = db.categoryDao().findById(tr.categoryid).getName();
+                i.putExtra("category", categoryName);
                 i.putExtra("type", tr.type);
                 i.putExtra("value", tr.value.toString());
                 startActivityForResult(i, 1);
@@ -58,15 +63,29 @@ public class DisplayListOfItems extends AppCompatActivity {
                 startActivityForResult(i, 3);
             }
         });
+        final Button sendButton = findViewById(R.id.sendButton);
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(DisplayListOfItems.this, SubmitDetails.class);
+                startActivity(i);
+            }
+        });
     }
-    public void addTransaction(String category, String type, Integer value){
+    public void addTransaction(Integer categoryid, String type, Integer value){
         Integer index = db.transactionDao().getLastUsedId();
         Transaction tr = new Transaction();
-        index++;
+        if (index == null)
+            index=1;
+        else
+            index++;
+        if(db.categoryDao().findById(categoryid) == null)
+            return;
         tr.setId(index);
-        tr.setCategory(category);
+        tr.setCategoryId(categoryid);
+        tr.setCategoryName(db.categoryDao().findById(categoryid).getName());
         tr.setType(type);
         tr.setValue(value);
+        tr.setUserid(userId);
         db.transactionDao().insertOne(tr);
     }
     public void removeTransaction(Integer id){
@@ -83,25 +102,29 @@ public class DisplayListOfItems extends AppCompatActivity {
 
                         Integer id = Integer.parseInt(data.getStringExtra("resultId"));
                         String category = data.getStringExtra("resultCategory");
+                        Integer categoryid = db.categoryDao().findByName(category).getId();
                         String type = data.getStringExtra("resultType");
                         Integer value = Integer.parseInt(data.getStringExtra("resultValue"));
                         ListView lv = findViewById(R.id.listView);
-                        db.transactionDao().updateTransaction(id, category, type, value);
-                        listItems = db.transactionDao().getAll();
+                        if (db.categoryDao().findById(categoryid) != null)
+                            db.transactionDao().updateTransaction(id, categoryid,db.categoryDao().findById(categoryid).getName(), type, value);
+                        listItems = db.transactionDao().getAllForUser(userId);
                         ArrayAdapter<Transaction> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
                         lv.setAdapter(adapter);
                     }
                     break;
-
                 }
                 case (2): {
                     if (resultCode == Activity.RESULT_OK) {
+
                         String category = data.getStringExtra("resultCategory");
+                        Category c = db.categoryDao().findByName(category);
+                        Integer categoryid = c.getId();
                         String type = data.getStringExtra("resultType");
                         Integer value = Integer.parseInt(data.getStringExtra("resultValue"));
                         ListView lv = findViewById(R.id.listView);
-                        addTransaction(category, type, value);
-                        listItems = db.transactionDao().getAll();
+                        addTransaction(categoryid, type, value);
+                        listItems = db.transactionDao().getAllForUser(userId);
                         ArrayAdapter<Transaction> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
                         lv.setAdapter(adapter);
                     }
@@ -112,12 +135,12 @@ public class DisplayListOfItems extends AppCompatActivity {
                         int id = Integer.valueOf(data.getStringExtra("resultId"));
                         ListView lv = findViewById(R.id.listView);
                         removeTransaction(id);
-                        listItems = db.transactionDao().getAll();
+                        listItems = db.transactionDao().getAllForUser(userId);
                         ArrayAdapter<Transaction> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, listItems);
                         lv.setAdapter(adapter);
                     }
+                    break;
                 }
-                break;
             }
         }
     }

@@ -11,12 +11,16 @@ import android.arch.persistence.room.PrimaryKey;
 public class Transaction {
     @PrimaryKey
     public Integer id;
-    @ColumnInfo(name = "category")
-    public String category;
+    @ColumnInfo(name = "categoryid")
+    public Integer categoryid;
+    @ColumnInfo(name = "categoryName")
+    public String categoryName;
     @ColumnInfo(name = "type")
     public String type;
     @ColumnInfo(name = "value")
     public Integer value;
+    @ColumnInfo(name = "userid")
+    public Integer userid;
 
     public Integer getId() {
         return id;
@@ -26,12 +30,20 @@ public class Transaction {
         this.id = id;
     }
 
-    public String getCategory() {
-        return category;
+    public Integer getCategoryId() {
+        return categoryid;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategoryId(Integer categoryid) {
+        this.categoryid = categoryid;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 
     public String getType() {
@@ -50,8 +62,15 @@ public class Transaction {
         this.value = value;
     }
 
+    public Integer getUserid() {
+        return userid;
+    }
+
+    public void setUserid(Integer userid) {
+        this.userid = userid;
+    }
     @Override
     public String toString(){
-        return "Transaction "+getId()+"\nCategory: "+getCategory()+"\nType: "+getType()+"\nValue: "+getValue();
+        return "Transaction "+getId()+"\nCategory: "+getCategoryName()+"\nType: "+getType()+"\nValue: "+getValue();
     }
 }

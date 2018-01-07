@@ -17,6 +17,9 @@ public interface TransactionDao {
     @Query("SELECT * FROM transactionTable")
     List<Transaction> getAll();
 
+    @Query("SELECT * FROM transactionTable WHERE userid LIKE :userId")
+    List<Transaction> getAllForUser(Integer userId);
+
     @Query("SELECT * FROM transactionTable WHERE id IN (:transactionIds)")
     List<Transaction> loadAllByIds(Integer[] transactionIds);
 
@@ -26,8 +29,11 @@ public interface TransactionDao {
     @Query("SELECT id FROM transactionTable ORDER BY id DESC LIMIT 1")
     Integer getLastUsedId();
 
-    @Query("UPDATE transactionTable SET category = :category, type = :type, value = :value WHERE id = :id")
-    void updateTransaction(Integer id, String category, String type, Integer value);
+    @Query("UPDATE transactionTable SET categoryid = :categoryid, categoryName = :categoryName, type = :type, value = :value WHERE id = :id")
+    void updateTransaction(Integer id, Integer categoryid, String categoryName, String type, Integer value);
+
+    @Query("UPDATE transactionTable SET userid = :userid WHERE id = :id")
+    void updateUserId(Integer id, Integer userid);
 
     @Insert
     void insertOne(Transaction transaction);
@@ -40,4 +46,7 @@ public interface TransactionDao {
 
     @Delete
     void delete(Transaction transaction);
+
+    @Query("DELETE FROM transactionTable")
+    void clearTable();
 }
