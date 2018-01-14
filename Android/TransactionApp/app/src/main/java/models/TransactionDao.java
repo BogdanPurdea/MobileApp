@@ -18,7 +18,7 @@ public interface TransactionDao {
     List<Transaction> getAll();
 
     @Query("SELECT * FROM transactionTable WHERE userid LIKE :userId")
-    List<Transaction> getAllForUser(Integer userId);
+    List<Transaction> getAllForUser(String userId);
 
     @Query("SELECT * FROM transactionTable WHERE id IN (:transactionIds)")
     List<Transaction> loadAllByIds(Integer[] transactionIds);
@@ -33,7 +33,7 @@ public interface TransactionDao {
     void updateTransaction(Integer id, Integer categoryid, String categoryName, String type, Integer value);
 
     @Query("UPDATE transactionTable SET userid = :userid WHERE id = :id")
-    void updateUserId(Integer id, Integer userid);
+    void updateUserId(Integer id, String userid);
 
     @Insert
     void insertOne(Transaction transaction);

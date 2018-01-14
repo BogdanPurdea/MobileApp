@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4fa6c9d1881a0a499af2a6f1450d129e",
+    "identityHash": "934a13e17e38b857c10e69e28d06dbb7",
     "entities": [
       {
         "tableName": "userTable",
@@ -76,7 +76,7 @@
       },
       {
         "tableName": "transactionTable",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `categoryid` INTEGER, `categoryName` TEXT, `type` TEXT, `value` INTEGER, `userid` INTEGER, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER, `categoryid` INTEGER, `categoryName` TEXT, `type` TEXT, `value` INTEGER, `userid` TEXT, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -111,7 +111,7 @@
           {
             "fieldPath": "userid",
             "columnName": "userid",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": false
           }
         ],
@@ -127,7 +127,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"4fa6c9d1881a0a499af2a6f1450d129e\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"934a13e17e38b857c10e69e28d06dbb7\")"
     ]
   }
 }

@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         final Button showButton = findViewById(R.id.goToLoginButton);
         showButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                Intent i = new Intent(MainActivity.this, AuthenticationActivity.class);
                 startActivity(i);
             }
         });

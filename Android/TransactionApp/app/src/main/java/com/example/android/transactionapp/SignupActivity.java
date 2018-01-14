@@ -135,6 +135,7 @@ public class SignupActivity extends AppCompatActivity {
         _signupButton.setEnabled(true);
     }
 
+
     public boolean validate() {
         boolean valid = true;
 

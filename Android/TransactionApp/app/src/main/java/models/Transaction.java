@@ -20,7 +20,7 @@ public class Transaction {
     @ColumnInfo(name = "value")
     public Integer value;
     @ColumnInfo(name = "userid")
-    public Integer userid;
+    public String userid;
 
     public Integer getId() {
         return id;
@@ -62,11 +62,11 @@ public class Transaction {
         this.value = value;
     }
 
-    public Integer getUserid() {
+    public String getUserid() {
         return userid;
     }
 
-    public void setUserid(Integer userid) {
+    public void setUserid(String userid) {
         this.userid = userid;
     }
     @Override

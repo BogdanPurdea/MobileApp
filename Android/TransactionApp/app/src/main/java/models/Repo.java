@@ -18,7 +18,7 @@ public class Repo {
 
     public void CreateDb(){
         db = Room.databaseBuilder(this.context.getApplicationContext(),
-                AppDatabase.class, "app-database").allowMainThreadQueries().build();
+                AppDatabase.class, "database_1").allowMainThreadQueries().build();
     }
     public AppDatabase getDb(){
         return db;

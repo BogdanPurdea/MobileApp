@@ -22,7 +22,7 @@ public class DisplayListOfItems extends AppCompatActivity {
     List<Transaction> listItems = new ArrayList<>();
     Repo repo = new Repo(this);
     AppDatabase db = repo.getDb();
-    Integer userId = 0;
+    String userId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +30,7 @@ public class DisplayListOfItems extends AppCompatActivity {
         setContentView(R.layout.activity_display_list_of_items);
 
         Intent i = getIntent();
-        userId = i.getIntExtra("userId",0);
+        userId = i.getStringExtra("userId");
 
         listItems = db.transactionDao().getAllForUser(userId);
         ListView lv = findViewById(R.id.listView);

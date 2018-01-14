@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1032119116020",
+    "firebase_url": "https://transactionapp-d540e.firebaseio.com",
+    "project_id": "transactionapp-d540e",
+    "storage_bucket": "transactionapp-d540e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1032119116020:android:db4e084c34007328",
+        "android_client_info": {
+          "package_name": "com.example.android.transactionapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1032119116020-85gh7s4lq87lb2j20p0d3q4if44bnshl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.android.transactionapp",
+            "certificate_hash": "4f4a467bb955a2f83e25df2d303d24711b0cefac"
+          }
+        },
+        {
+          "client_id": "1032119116020-ef5835apa7s9vk5mn8feikmfhbnd9b0g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3H-a0hDnsRCAo20-QN-nFb4Avhmt6CLg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1032119116020-ef5835apa7s9vk5mn8feikmfhbnd9b0g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

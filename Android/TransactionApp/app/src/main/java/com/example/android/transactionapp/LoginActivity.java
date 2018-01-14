@@ -4,9 +4,9 @@ package com.example.android.transactionapp;
  * Created by Bogdan on 12/30/2017.
  */
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -15,17 +15,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import models.AppDatabase;
 import models.Repo;
 import models.User;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
+    private FirebaseAuth mAuth;
 
     @BindView(R.id.input_email) EditText _emailText;
     @BindView(R.id.input_password) EditText _passwordText;
@@ -37,6 +43,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+        mAuth = FirebaseAuth.getInstance();
 
         repo.CreateDb();
 
@@ -61,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+
     public void login() {
         Log.d(TAG, "Login");
 
@@ -71,16 +79,17 @@ public class LoginActivity extends AppCompatActivity {
 
         _loginButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
+        /*final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
                 R.style.AppTheme);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
+        progressDialog.show();*/
 
         String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
-        boolean ok = true;
+        signIn(email, password);
+        /*boolean ok = true;
 
         AppDatabase db = repo.getDb();
 
@@ -105,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                             onLoginFailed();
                         progressDialog.dismiss();
                     }
-                }, 1000);
+                }, 1000);*/
     }
 
 
@@ -152,7 +161,53 @@ public class LoginActivity extends AppCompatActivity {
         }
         finish();
     }
+    public void signIn(String email, String password){
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithEmail:failure", task.getException());
+                            //Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
+                            updateUI(null);
+                        }
+                    }
+                });
+    }
+    public void createAccount(String email, String password){
+        mAuth.createUserWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "createUserWithEmail:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            updateUI(user);
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "createUserWithEmail:failure", task.getException());
+                            //Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",Toast.LENGTH_SHORT).show();
+                            updateUI(null);
+                        }
 
+                    }
+                });
+    }
+
+    public void updateUI(FirebaseUser user){
+        if (user != null) {
+            Intent i = new Intent(LoginActivity.this, DisplayListOfItems.class);
+            i.putExtra("userId", user.getUid());
+            startActivity(i);
+        }
+    }
     public void onLoginFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
 
